@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SPK Pemilihan Perangkat IoT - SAW & WP</title>
+
+  <!-- LINK CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="card" style="display:flex;align-items:center;padding:12px 16px">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="margin-right:10px">
+          <rect x="2" y="3" width="20" height="14" rx="2" stroke="#c7d2fe" stroke-width="1.2"/>
+          <path d="M7 13v6" stroke="#c7d2fe" stroke-width="1.2"/>
+          <path d="M17 13v6" stroke="#c7d2fe" stroke-width="1.2"/>
+        </svg>
+        <div>
+          <h1>SPK Pemilihan Perangkat IoT — SAW & WP</h1>
+          <div class="footnote">Masukkan alternatif dan kriteria lalu bandingkan peringkat hasil SAW & WP.</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="controls">
+          <div class="two-col">
+            <div style="flex:1">
+              <label>Nama Alternatif (Perangkat IoT)</label>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="altName" type="text" placeholder="Contoh: Arduino Uno, ESP32, Raspberry Pi" />
+                <button class="btn small" id="addAltBtn">Tambah</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1">
+              <label>Tambah Kriteria</label>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="critName" type="text" placeholder="Contoh: Performa atau Daya Pemrosesan" />
+                <select id="critType">
+                  <option value="benefit">Benefit</option>
+                  <option value="cost">Cost</option>
+                </select>
+                <button class="btn small" id="addCritBtn">Tambah</button>
+              </div>
+            </div>
+            <div style="width:180px">
+              <label>Total bobot saat ini</label>
+              <div id="weightSum" class="footnote">0</div>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="card criteria-list" style="flex:1">
+              <h3 style="margin:0 0 8px 0">Kriteria & Bobot</h3>
+              <table id="criteriaTable">
+                <thead>
+                  <tr><th>Kriteria</th><th>Tipe</th><th>Bobot</th><th></th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card alts-list" style="width:360px">
+              <h3 style="margin:0 0 8px 0">Alternatif</h3>
+              <table id="altTable">
+                <thead>
+                  <tr><th>Nama</th><th></th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="margin:8px 0">Matriks Nilai</h3>
+            <div id="matrixWrap" class="card" style="padding:10px;overflow:auto"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+            <button class="mutebtn small" id="resetBtn">Reset</button>
+            <button class="btn small" id="computeBtn">Hitung SAW & WP</button>
+          </div>
+
+          <div class="results" id="results"></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>Petunjuk Singkat</h3>
+        <ul style="margin:8px 0;padding-left:18px;color:var(--muted)">
+          <li>Tambahkan kriteria (pilih benefit/cost) dan masukkan bobot (angka > 0).</li>
+          <li>Tambahkan alternatif lalu isi nilai pada matriks.</li>
+          <li>Tekan <strong>Hitung SAW & WP</strong> untuk melihat perbandingan peringkat.</li>
+        </ul>
+
+        <div style="margin-top:12px">
+          <h4>Hasil</h4>
+          <div id="rankings" style="margin-top:8px"></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <h4>Export</h4>
+          <button class="mutebtn small" id="copyBtn">Salin Hasil</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
