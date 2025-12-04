@@ -16,18 +16,27 @@
     { id: idGen(), name: 'Arduino Mega' },
   ];
 
+  const defaultMatrixValues = {
+  "Arduino Uno":        [4, 2, 3, 4, 2],
+  "Raspberry Pi":       [3, 3, 3, 3, 2],
+  "ESP32":              [1, 5, 5, 5, 5],
+  "BeagleBone":         [5, 2, 4, 3, 3],
+  "Intel Edison":       [4, 3, 4, 3, 3],
+  "Particle Photon":    [1, 5, 4, 3, 5],
+  "Arduino Mega":       [1, 5, 5, 2, 5],
+};
+
+
   let criteria = JSON.parse(JSON.stringify(defaultCriteria));
   let alternatives = JSON.parse(JSON.stringify(defaultAlts));
   let matrix = {}; 
 
-  // helpers
   function idGen() {
     return 'id' + Math.random().toString(36).slice(2, 9);
   }
   function $(sel) { return document.querySelector(sel); }
   function $all(sel) { return Array.from(document.querySelectorAll(sel)); }
 
-  // init
   function init() {
     renderCriteriaTable();
     renderAltTable();
@@ -37,14 +46,17 @@
   }
 
   function createEmptyMatrix() {
-    matrix = {};
-    alternatives.forEach(a => {
-      matrix[a.id] = {};
-      criteria.forEach(c => matrix[a.id][c.id] = 0);
+  matrix = {};
+  alternatives.forEach(a => {
+    matrix[a.id] = {};
+    const values = defaultMatrixValues[a.name];   
+    criteria.forEach((c, index) => {
+      matrix[a.id][c.id] = values ? values[index] : 0;
     });
-  }
+  });
+}
 
-  // render functions
+
   function renderCriteriaTable() {
     const tbody = $('#criteriaTable tbody');
     tbody.innerHTML = '';
@@ -63,7 +75,6 @@
       tbody.appendChild(tr);
     });
 
-    // attach events
     $all('.weightInp').forEach(inp =>
       inp.addEventListener('input', e => {
         const id = e.target.dataset.crítid || e.target.dataset.critid;
@@ -147,7 +158,6 @@
     table.appendChild(tbody);
     wrap.appendChild(table);
 
-    // events
     $all('#matrixWrap input').forEach(inp =>
       inp.addEventListener('input', e => {
         const aId = e.target.dataset.altid;
@@ -158,7 +168,6 @@
     );
   }
 
-  // events add
   $('#addAltBtn').addEventListener('click', () => {
     const name = $('#altName').value.trim();
     if (!name) return alert('Masukkan nama alternatif');
@@ -218,14 +227,12 @@
     }
   });
 
-  // compute functions
   function computeSAW_WP() {
     if (criteria.length === 0 || alternatives.length === 0) return null;
 
     const sumW = criteria.reduce((s, c) => s + (parseFloat(c.weight) || 0), 0);
     if (sumW <= 0) return null;
 
-    // 1. raw matrix
     const raw = alternatives.map(a => {
       return {
         id: a.id,
@@ -239,7 +246,6 @@
       };
     });
 
-    // 2. normalize SAW
     const normalized = raw.map(r => ({ id: r.id, name: r.name, vals: [] }));
 
     criteria.forEach((c, idx) => {
@@ -266,13 +272,11 @@
       }
     });
 
-    // SAW score
     const saw = normalized.map(r => {
       const score = r.vals.reduce((s, v) => s + v.norm * v.weight, 0);
       return { id: r.id, name: r.name, score };
     });
 
-    // 3. WP score
     const wp = raw.map(r => {
       let product = 1;
 
@@ -329,7 +333,6 @@
       return;
     }
 
-    // SAW table
     const sawCard = document.createElement('div');
     sawCard.className = 'card';
     sawCard.style.marginTop = '10px';
@@ -349,7 +352,6 @@
     sawCard.appendChild(t);
     out.appendChild(sawCard);
 
-    // WP table
     const wpCard = document.createElement('div');
     wpCard.className = 'card';
     wpCard.style.marginTop = '10px';
@@ -370,7 +372,6 @@
     wpCard.appendChild(t2);
     out.appendChild(wpCard);
 
-    // comparison
     const comp = document.createElement('div');
     comp.className = 'card comparison';
     comp.style.marginTop = '10px';
@@ -412,10 +413,8 @@
     $('#weightSum').innerText = sum.toFixed(2);
   }
 
-  // initial fill
   init();
 
-  // demo sample
   function fillSampleValues() {
     alternatives.forEach(a => {
       criteria.forEach(c => {
@@ -425,4 +424,3 @@
     });
     renderMatrix();
   }
-  fillSampleValues();
